@@ -8,12 +8,12 @@ from common.error import AccountEmailNotFound
 class AccountData:
 
     @staticmethod
-    def create(email,
+    def create(email_address,
                password_hash):
 
         query = """
             INSERT INTO account
-              (email, password)
+              (email_address, password)
             VALUES 
               (%s, %s)
             RETURNING id;
@@ -23,7 +23,7 @@ class AccountData:
 
         with g.db.cursor() as cursor:
             try:
-                cursor.execute(query, (email, password_hash))
+                cursor.execute(query, (email_address, password_hash))
                 account_id = cursor.fetchone()[0]
                 g.db.commit()
             except psycopg2.Error as e:
@@ -35,7 +35,7 @@ class AccountData:
         return account_id
 
     @staticmethod
-    def lookup_by_email(email):
+    def lookup_by_email(email_address):
 
         query = """
             SELECT
@@ -50,7 +50,7 @@ class AccountData:
 
         with g.db.cursor() as cursor:
             try:
-                cursor.execute(query, email)
+                cursor.execute(query, email_address)
                 result = cursor.fetchone()
                 if result is None:
                     raise AccountEmailNotFound()
