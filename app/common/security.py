@@ -1,4 +1,5 @@
 from passlib.hash import bcrypt
+from flask import g
 import jwt
 
 from common.error import InvalidAccessToken
@@ -18,11 +19,11 @@ class Security:
 
     @staticmethod
     def generate_access_token(credentials_object):
-        return jwt.encode(credentials_object, 'testsecret123', algorithm='HS256')
+        return jwt.encode(credentials_object, g.token_secret, algorithm='HS256')
 
     @staticmethod
     def extract_access_token_credentials(access_token):
         try:
-            return jwt.decode(access_token, 'testsecret123', algorithms=['HS256'])
+            return jwt.decode(access_token, g.token_secret, algorithms=['HS256'])
         except jwt.InvalidTokenError as e:
             raise InvalidAccessToken()
